@@ -15,6 +15,15 @@ topic_list = [
     ['ジブリの話', '夏の話', '先月の話', 'パチンコの話'],
 ]
 
+command_detail = """
+ガムトークbotで使えるコマンド一覧:
+
+?rule - ルールの説明
+?gum - 4つの話題を取得
+?dice - サイコロを振る
+?topics - 全ての話題を表示する
+"""
+
 def get_topic(topic_list):
     topic_num = random.randint(0, len(topics) - 1)
     topic = topics[topic_num]
@@ -28,6 +37,9 @@ rule = '「ガムトーク」は、めくったカードの中から、指定さ
 
 def dice():
     return random.randint(1, 4)
+
+def get_command(command_detail):
+    return command_detail
 
 
 client = discord.Client()
@@ -63,6 +75,9 @@ async def on_message(message):
             index = index + 1
             topic =f"Topic {index}\n {topic1}、{topic2}、{topic3}、{topic4}\n"
             await message.channel.send(topic)
+
+    if message.content.startswith('?command') or message.content.startswith('?help'):
+        await message.channel.send(command_detail)
 
 token = os.getenv("DISCORD_TOKEN")
 client.run(token)
