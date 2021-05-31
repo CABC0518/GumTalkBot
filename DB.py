@@ -6,8 +6,9 @@ import random
 class database:
     def __init__(self, server_table):
         PASSWORD = os.getenv("PASSWORD")
+        DATABASE = os.getenv("DATABASE")
         self.server_table = server_table
-        self._conn = psycopg2.connect(host="localhost", database="test", user="postgres", password=PASSWORD)
+        self._conn = psycopg2.connect(host="localhost", database=DATABASE, user="postgres", password=PASSWORD)
         self._cur = self._conn.cursor()
 
     def create_table(self):
