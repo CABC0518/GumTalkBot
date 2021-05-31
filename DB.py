@@ -11,7 +11,7 @@ class database:
         self._cur = self._conn.cursor()
 
     def create_table(self):
-        command = "CREATE TABLE IF NOT EXISTS {} ( id SERIAL PRIMARY KEY, topic VARCHAR(30) NOT NULL)".format(self.server_table)
+        command = "CREATE TABLE IF NOT EXISTS {} ( id SERIAL PRIMARY KEY, topic VARCHAR(30) PRIMARY KEY NOT NULL)".format(self.server_table)
         self._cur.execute(command)
         self._conn.commit()
         print("executed. table created")
@@ -34,6 +34,11 @@ class database:
         self._cur.execute(command)
         self._conn.commit()
         print('topic succeessfully removed')
+        
+    def delete_all_topics(self):
+        command = "DELETE FROM {}".format(self.server_table)
+        self._cur.execute(command)
+        self._conn.commit()
 
     def get_all_topics(self):
         topics = []
