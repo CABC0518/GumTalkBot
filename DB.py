@@ -1,4 +1,5 @@
 import psycopg2
+import random
 
 class database:
 
@@ -32,7 +33,7 @@ class database:
         self._conn.commit()
         print('topic succeessfully removed')
 
-    def get_topics(self):
+    def get_all_topics(self):
         topics = []
         command = "SELECT * FROM {}".format(self.server_table)
         self._cur.execute(command)
@@ -40,3 +41,12 @@ class database:
         for result in result:
             topics.append(result[1])
         return topics
+
+    def get_topic_set(self):
+        topics = self.get_all_topics()
+        nums = random.sample(range(0, len(topics)), 5)
+        topics_set = []
+        for num in nums:
+            topics_set.append(topics[num])
+        print(topics_set)
+        return topics_set
