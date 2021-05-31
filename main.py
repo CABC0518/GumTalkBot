@@ -20,6 +20,9 @@ async def on_guild_join(guild):
     db = database(server_table)
     db.create_table()
     db.insert_default_topics()
+    with open('command.txt', 'r') as file:
+        data = file.read()
+        await message.channel.send(data)
 
 @client.event
 async def on_ready():
