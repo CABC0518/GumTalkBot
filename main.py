@@ -1,6 +1,7 @@
 import discord
 import os
 import random
+from DB import database
 
 
 topic_list = [
@@ -41,9 +42,18 @@ def dice():
 def get_command(command_detail):
     return command_detail
 
+def get_server_name(guild):
+    server_name = str(guild).replace(" ", "") + "_table"
+    return server_name
+
 
 client = discord.Client()
 
+@client.event
+async def on_guild_join(guild):
+    server_name = str(guild).replace(" ", "") + "_table"
+    db = database(server_name)
+    db.create_table()
 
 @client.event
 async def on_ready():
@@ -78,6 +88,28 @@ async def on_message(message):
 
     if message.content.startswith('?command') or message.content.startswith('?help'):
         await message.channel.send(command_detail)
+
+    if message.content.startswith('?add '):
+        server_name = get_server_name(message.guild.name)
+        topic = "'" + message.content.split()[1] + "'"
+        db = database(server_name)
+        db.insert_topic(topic)
+        await message.channel.send(f"{topic}を追加しました")
+
+    if message.content.startswith('?remove '):
+        topic = "'" + message.content.split()[1] + "'"
+        server_name = get_server_name(message.guild.name)
+        db = database(server_name)
+        db.remove_topic(topic)
+        await message.channel.send(f"{topic}を削除しました")
+
+    if message.content.startswith('?all_topics'):
+        server_name = get_server_name(message.guild.name)
+        db = database(server_name)
+        result = db.get_topics()
+        for topic in result:
+            await message.channel.send(topic)
+
 
 token = os.getenv("DISCORD_TOKEN")
 client.run(token)
