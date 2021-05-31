@@ -1,7 +1,6 @@
 import psycopg2
 import random
-
-
+import os
 
 class database:
     def __init__(self, server_table):
