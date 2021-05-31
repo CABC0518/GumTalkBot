@@ -69,6 +69,7 @@ async def on_message(message):
     if message.content.startswith('?topics'):
         db = database(get_server_table(message.guild.id))
         result = db.get_all_topics()
+        await message.channel.send(result)
 
 
 token = os.getenv("DISCORD_TOKEN")
