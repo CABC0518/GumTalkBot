@@ -42,23 +42,21 @@ def dice():
 def get_command(command_detail):
     return command_detail
 
-def get_server_name(guild):
-    server_name = str(guild).replace(" ", "") + "_table"
-    return server_name
-
-
 client = discord.Client()
+
+def get_server_table(guild_id):
+    return 'table_' + str(guild_id)
 
 @client.event
 async def on_guild_join(guild):
-    server_name = str(guild).replace(" ", "") + "_table"
-    db = database(server_name)
+    server_table = get_server_table(guild.id)
+    db = database(server_table)
     db.create_table()
+    db.insert_default_topics()
 
 @client.event
 async def on_ready():
     print(f"We have logged in")
-
 
 @client.event
 async def on_message(message):
@@ -90,25 +88,23 @@ async def on_message(message):
         await message.channel.send(command_detail)
 
     if message.content.startswith('?add '):
-        server_name = get_server_name(message.guild.name)
         topic = "'" + message.content.split()[1] + "'"
-        db = database(server_name)
+        db = database(get_server_table(message.guild.id))
         db.insert_topic(topic)
         await message.channel.send(f"{topic}を追加しました")
 
     if message.content.startswith('?remove '):
         topic = "'" + message.content.split()[1] + "'"
-        server_name = get_server_name(message.guild.name)
-        db = database(server_name)
+        db = database(get_server_table(message.guild.id))
         db.remove_topic(topic)
         await message.channel.send(f"{topic}を削除しました")
 
     if message.content.startswith('?all_topics'):
-        server_name = get_server_name(message.guild.name)
-        db = database(server_name)
+        db = database(get_server_table(message.guild.id))
         result = db.get_topics()
-        for topic in result:
-            await message.channel.send(topic)
+        await message.channel.send(result)
+        # for topic in result:
+        #     await message.channel.send(topic)
 
 
 token = os.getenv("DISCORD_TOKEN")
