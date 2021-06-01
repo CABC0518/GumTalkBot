@@ -16,11 +16,14 @@ def get_server_table(guild_id):
 
 @client.event
 async def on_guild_join(guild):
-    server_table = get_server_table(guild.id)
-    db = database(server_table)
-    db.create_table()
-    db.delete_all_topics()
-    db.insert_default_topics()
+    try:
+        server_table = get_server_table(guild.id)
+        db = database(server_table)
+        db.create_table()
+        db.delete_all_topics()
+        db.insert_default_topics()
+    except Exception as e:
+        print(e)
 
 @client.event
 async def on_ready():
@@ -32,12 +35,15 @@ async def on_message(message):
         return
 
     if message.content.startswith('?gum'):
-        db = database(get_server_table(message.guild.id))
-        topic_set = db.get_topic_set()
-        for index, topic in enumerate(topic_set):
-            index += 1
-            topic = f"{index}: {topic}"
-            await message.channel.send(topic)
+        try:
+            db = database(get_server_table(message.guild.id))
+            topic_set = db.get_topic_set()
+            for index, topic in enumerate(topic_set):
+                index += 1
+                topic = f"{index}: {topic}"
+                await message.channel.send(topic)
+        except Exception as e:
+            print(e)
 
 
     if message.content.startswith('?dice'):
@@ -57,20 +63,29 @@ async def on_message(message):
 
     if message.content.startswith('?add '):
         topic = "'" + message.content.split()[1] + "'"
-        db = database(get_server_table(message.guild.id))
-        db.insert_topic(topic)
-        await message.channel.send(f"{topic}を追加しました")
+        try:
+            db = database(get_server_table(message.guild.id))
+            db.insert_topic(topic)
+            await message.channel.send(f"{topic}を追加しました")
+        except:
+            print(e)
 
     if message.content.startswith('?remove '):
         topic = "'" + message.content.split()[1] + "'"
-        db = database(get_server_table(message.guild.id))
-        db.remove_topic(topic)
-        await message.channel.send(f"{topic}を削除しました")
+        try:
+            db = database(get_server_table(message.guild.id))
+            db.remove_topic(topic)
+            await message.channel.send(f"{topic}を削除しました")
+        except Exception as e:
+            print(e)
 
     if message.content.startswith('?topics'):
-        db = database(get_server_table(message.guild.id))
-        result = db.get_all_topics()
-        await message.channel.send(result)
+        try:
+            db = database(get_server_table(message.guild.id))
+            result = db.get_all_topics()
+            await message.channel.send(result)
+        except Exception as e:
+            print(e)
 
 
 token = os.getenv("DISCORD_TOKEN")
