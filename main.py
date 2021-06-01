@@ -19,10 +19,7 @@ async def on_guild_join(guild):
     server_table = get_server_table(guild.id)
     db = database(server_table)
     db.create_table()
-    try:
-        db.delete_all_topics()
-    except:
-        print('new server, no records to delete. Move on!')
+    db.delete_all_topics()
     db.insert_default_topics()
 
 @client.event
