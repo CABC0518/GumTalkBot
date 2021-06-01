@@ -15,6 +15,7 @@ class database:
         self._cur.execute(command)
         self._conn.commit()
 
+# this function gets topics from default_topic.txt, inserts them into database
     def insert_default_topics(self):
         with open('default_topic.txt', 'r') as file:
             data = file.read()
@@ -46,6 +47,7 @@ class database:
             topics.append(result[1])
         return topics
 
+# get all topics from database and creates 5 topics set and return it
     def get_topic_set(self):
         topics = self.get_all_topics()
         nums = random.sample(range(0, len(topics)), 5)

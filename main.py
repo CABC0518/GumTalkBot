@@ -6,14 +6,15 @@ from DB import database
 def dice():
     return random.randint(1, 5)
 
-def get_command(command_detail):
-    return command_detail
-
 client = discord.Client()
 
+
+# take discord server id and return table name ("table_ + id")
 def get_server_table(guild_id):
     return 'table_' + str(guild_id)
 
+# when the bot joins a  new server, it creates a new table for it and inserts default topics in it.
+# Before inserting, all topics will be deleted to avoid dupulicats (when the bot rejoins a server for some reasons)
 @client.event
 async def on_guild_join(guild):
     try:
@@ -25,15 +26,18 @@ async def on_guild_join(guild):
     except Exception as e:
         print(e)
 
+# when a bot is ready, this will be executed
 @client.event
 async def on_ready():
     print(f"We have logged in")
 
+# This function defines what the bot will return when the specific messages are sent by users
 @client.event
 async def on_message(message):
     if message.author == client:
         return
 
+# get a set of random topics from database and send it to users
     if message.content.startswith('?gum'):
         try:
             db = database(get_server_table(message.guild.id))
@@ -45,23 +49,25 @@ async def on_message(message):
         except Exception as e:
             print(e)
 
-
+# get a random number and send it to users
     if message.content.startswith('?dice'):
         dice_num = dice()
         await message.channel.send(dice_num)
 
+# get rule text from rule.txt and send it to users
     if message.content.startswith('?rule'):
         with open('rule.txt', 'r') as file:
             data = file.read()
             await message.channel.send(data)
 
-
+# get command text from command.txt and send it to users
     if message.content.startswith('?command') or message.content.startswith('?help'):
         with open('command.txt', 'r') as file:
             data = file.read()
             await message.channel.send(data)
 
     if message.content.startswith('?add '):
+        # The topic string will have '' which is required to insert into database
         topic = "'" + message.content.split()[1] + "'"
         try:
             db = database(get_server_table(message.guild.id))
@@ -71,6 +77,7 @@ async def on_message(message):
             print(e)
 
     if message.content.startswith('?remove '):
+        # The topic string will have '' which is required to insert into database
         topic = "'" + message.content.split()[1] + "'"
         try:
             db = database(get_server_table(message.guild.id))
