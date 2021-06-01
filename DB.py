@@ -14,7 +14,6 @@ class database:
         command = "CREATE TABLE IF NOT EXISTS {} ( id SERIAL PRIMARY KEY, topic VARCHAR(30) NOT NULL)".format(self.server_table)
         self._cur.execute(command)
         self._conn.commit()
-        print("executed. table created")
 
     def insert_default_topics(self):
         with open('default_topic.txt', 'r') as file:
@@ -27,13 +26,11 @@ class database:
         command = "INSERT INTO {} (topic) VALUES ({})".format(self.server_table, topic)
         self._cur.execute(command)
         self._conn.commit()
-        print('topic succeessfully added')
 
     def remove_topic(self, topic):
         command = "DELETE FROM {} WHERE topic = {}".format(self.server_table, topic)
         self._cur.execute(command)
         self._conn.commit()
-        print('topic succeessfully removed')
 
     def delete_all_topics(self):
         command = "DELETE FROM {}".format(self.server_table)
